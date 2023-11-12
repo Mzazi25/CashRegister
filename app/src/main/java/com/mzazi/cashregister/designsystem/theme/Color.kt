@@ -1,4 +1,4 @@
-package com.mzazi.cashregister.ui.theme
+package com.mzazi.cashregister.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
