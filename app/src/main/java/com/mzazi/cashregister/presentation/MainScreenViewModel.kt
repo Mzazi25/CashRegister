@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -25,36 +26,16 @@ class MainScreenViewModel @Inject constructor(
     private val repository: RegisterRepo
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(RegisterState())
-    val state: StateFlow<RegisterState> = _state.asStateFlow()
+    private val _mutableDouble = MutableStateFlow(0.00)
+    val doubleState: StateFlow<Double> = _mutableDouble.asStateFlow()
 
     private val _expressions = MutableStateFlow("")
     val expressions: StateFlow<String> = _expressions.asStateFlow()
 
     private val _expressionsList = MutableStateFlow(listOf<String>())
     val expressionsList: StateFlow<List<String>> = _expressionsList.asStateFlow()
-    var summation = MutableStateFlow("")
 
-    fun getRegisterValues(input: Double) {
-        viewModelScope.launch {
-            repository.getRegisterValues(input)
-                .onStart {
-                    _state.value = _state.value.copy(
-                        isLoading = true
-                    )
-                }
-                .catch { throwable ->
-                    _state.value = _state.value.copy(
-                        error = throwable
-                    )
-                }.collect { entity->
-                    val toDomain =entity.asCoreModel()
-                    _state.value = RegisterState(
-                        input = toDomain.values
-                    )
-                }
-        }
-    }
+    var summation = MutableStateFlow("")
 
     fun onRegisterAction(action:RegisterAction){
         when(action){
@@ -71,10 +52,14 @@ class MainScreenViewModel @Inject constructor(
                 _expressions.value +=action.number
             }
             is RegisterAction.Op -> {
-                val number = BigDecimal(_expressions.value).setScale(2, RoundingMode.HALF_UP)
-                _expressionsList.value = _expressionsList.value + number.toString()
+                _expressionsList.value = _expressionsList.value + _expressions.value
                 summation.value = calculateResult()
                 _expressions.value = ""
+//
+            }
+            is RegisterAction.Clear -> {
+                _expressionsList.value = emptyList()
+                summation.value = 0.00.toString()
             }
         }
     }

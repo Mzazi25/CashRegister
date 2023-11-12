@@ -5,4 +5,5 @@ sealed interface RegisterAction{
     data class Op(val operation: Operation):RegisterAction
     object Decimal:RegisterAction
     object Delete:RegisterAction
+    object Clear:RegisterAction
 }

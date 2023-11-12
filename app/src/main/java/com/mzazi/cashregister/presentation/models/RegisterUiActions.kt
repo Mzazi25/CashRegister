@@ -53,6 +53,10 @@ val registerActions = listOf(
         action = RegisterAction.Delete,
     ),
     RegisterUiAction(
+        text = "CLEAR",
+        action = RegisterAction.Clear,
+    ),
+    RegisterUiAction(
         text = ".",
         action = RegisterAction.Decimal,
     )

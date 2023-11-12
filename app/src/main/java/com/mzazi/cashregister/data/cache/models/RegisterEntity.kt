@@ -6,5 +6,5 @@ import androidx.room.PrimaryKey
 @Entity
 data class RegisterEntity(
     @PrimaryKey
-    val values:Double
+    val values:String
 )
