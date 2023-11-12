@@ -3,44 +3,32 @@ package com.mzazi.cashregister
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.mzazi.cashregister.ui.theme.CashRegisterTheme
+import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mzazi.cashregister.designsystem.theme.CashRegisterTheme
+import com.mzazi.cashregister.presentation.MainScreen
+import com.mzazi.cashregister.presentation.MainScreenViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            val viewModel: MainScreenViewModel = hiltViewModel()
+            val expression by viewModel.expressions.collectAsStateWithLifecycle()
+            val expressionList by viewModel.expressionsList.collectAsStateWithLifecycle()
+            val summation by viewModel.summation.collectAsStateWithLifecycle()
+
             CashRegisterTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
+                MainScreen(
+                    onAction = viewModel::onRegisterAction,
+                    expression = expression,
+                    expressionList = expressionList,
+                    summation = summation
+                )
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CashRegisterTheme {
-        Greeting("Android")
     }
 }
