@@ -20,6 +20,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.mzazi.cashregister.data.cache.models.RegisterEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RegisterDao {
@@ -28,7 +29,7 @@ interface RegisterDao {
     suspend fun insertRegister(registerEntity: RegisterEntity)
 
     @Query("SELECT * FROM RegisterEntity")
-    suspend fun getRegisterEntries(): List<RegisterEntity>
+    fun getRegisterEntries(): Flow<List<RegisterEntity>>
 
     @Query("DELETE FROM RegisterEntity")
     suspend fun nukeCashRegister()

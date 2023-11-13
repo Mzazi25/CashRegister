@@ -15,7 +15,6 @@
  */
 package com.mzazi.cashregister.domain.repo
 
-import com.mzazi.cashregister.data.cache.models.RegisterEntity
 import com.mzazi.cashregister.domain.models.RegisterValues
 import kotlinx.coroutines.flow.Flow
 

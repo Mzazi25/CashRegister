@@ -33,8 +33,10 @@ class RegisterRepoImpl @Inject constructor(
 ) : RegisterRepo {
 
     override fun getRegisterValues(): Flow<List<RegisterValues>> {
-        return flow<List<RegisterValues>> {
-            registerDao.getRegisterEntries()
+        return flow {
+            registerDao.getRegisterEntries().collect{ entityList->
+                emit(entityList.map { it.asCoreEntity() })
+            }
         }.flowOn(dispatcher)
     }
 

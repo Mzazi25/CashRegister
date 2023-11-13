@@ -52,6 +52,10 @@ class MainScreenViewModel @Inject constructor(
             repository.getRegisterValues()
                 .collect { registerList ->
                     _expressionsList.value = registerList
+                    _expressionsList.value = _expressionsList.value + RegisterValues(
+                        values = _expressions.value
+                    )
+                    summation.value = calculateResult()
                 }
         }
     }
@@ -69,15 +73,11 @@ class MainScreenViewModel @Inject constructor(
             is RegisterAction.Number -> {
                 _expressions.value += action.number
             }
-            is RegisterAction.Op -> {
+            is RegisterAction.Add -> {
                 viewModelScope.launch {
                     val registerValues = RegisterValues(_expressions.value)
                     repository.insertRegisterValues(registerValues)
                 }
-                _expressionsList.value = _expressionsList.value + RegisterValues(
-                    values = _expressions.value
-                )
-                summation.value = calculateResult()
                 _expressions.value = ""
             }
             is RegisterAction.Clear -> {
