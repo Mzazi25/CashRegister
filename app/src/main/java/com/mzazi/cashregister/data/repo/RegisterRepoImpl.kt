@@ -27,11 +27,21 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 
+/**
+ * Implementation of the [RegisterRepo] interface.
+ * @property registerDao The DAO for accessing and managing cash register data in the local database.
+ * @property dispatcher The CoroutineDispatcher to perform operations on.
+ */
+
 class RegisterRepoImpl @Inject constructor(
     private val registerDao: RegisterDao,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : RegisterRepo {
 
+    /**
+     * Retrieves a flow of all Cash Register from the local database.
+     * @return A flow emitting a list of [RegisterValues] objects representing the cash register.
+     */
     override fun getRegisterValues(): Flow<List<RegisterValues>> {
         return flow {
             registerDao.getRegisterEntries().collect { entityList ->
@@ -40,11 +50,13 @@ class RegisterRepoImpl @Inject constructor(
         }.flowOn(dispatcher)
     }
 
+    // This function inserts RegisterValues to the database and runs on Dispatcher.IO
     override suspend fun insertRegisterValues(input: RegisterValues) =
         withContext(dispatcher) {
             registerDao.insertRegister(input.asCoreEntity())
         }
 
+    // This function deletes all values from the database and runs on Dispatcher.IO
     override suspend fun nukeRegisterValues() =
         withContext(dispatcher) {
             registerDao.nukeCashRegister()

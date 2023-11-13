@@ -19,7 +19,21 @@ import com.mzazi.cashregister.domain.models.RegisterValues
 import kotlinx.coroutines.flow.Flow
 
 interface RegisterRepo {
+    /**
+     * Retrieves a Flow of register values from the data source.
+     * @return A Flow emitting a list of [RegisterValues].
+     */
     fun getRegisterValues(): Flow<List<RegisterValues>>
+
+    /**
+     * Inserts a new register value into the data source.
+     *
+     * @param input The [RegisterValues] to be inserted.
+     */
     suspend fun insertRegisterValues(input: RegisterValues)
+
+    /**
+     * Clears all register values from the data source.
+     */
     suspend fun nukeRegisterValues()
 }

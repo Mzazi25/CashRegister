@@ -34,28 +34,43 @@ import kotlinx.coroutines.launch
 class MainScreenViewModel @Inject constructor(
     private val repository: RegisterRepo
 ) : ViewModel() {
-
+    // Input expression for the calculator
     private val _expressions = MutableStateFlow("")
     val expressions: StateFlow<String> = _expressions.asStateFlow()
 
+    // List of register values
     private val _expressionsList = MutableStateFlow(listOf<RegisterValues>())
     val expressionsList: StateFlow<List<RegisterValues>> = _expressionsList.asStateFlow()
 
+    // Summation of all register values
     val summation = MutableStateFlow("")
 
     init {
         observeCachedData()
     }
 
+    /*
+    * Function to observe cached data from the repository and update expressionsList and summation
+     */
     private fun observeCachedData() {
         viewModelScope.launch {
             repository.getRegisterValues()
                 .collect { registerList ->
+                    // Update expressionsList and calculate the new summation
                     _expressionsList.value = registerList
                     summation.value = calculateResult()
                 }
         }
     }
+
+    /*
+    * This function handles all user actions for
+    * Deleting a value
+    * Adding a value
+    * Inputting a number
+    * Adding a decimal
+    * Clearing data from the list
+     */
     fun onRegisterAction(action: RegisterAction) {
         when (action) {
             is RegisterAction.Delete -> {
@@ -85,6 +100,7 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
+    // Check if a decimal point can be added to the current expression
     private fun canEnterDecimal(): Boolean {
         if (_expressions.value.isEmpty() || _expressions.value.last() in "$operationSymbols.()") {
             return false
@@ -94,13 +110,17 @@ class MainScreenViewModel @Inject constructor(
         }.contains(".")
     }
 
+    // Calculate the summation of all register values
     private fun calculateResult(): String {
+        // Extract numeric values from the expressionsList and calculate the sum
         val numbers = _expressionsList.value.mapNotNull {
             it.values.toDoubleOrNull()
         }
+        // If no register values, return 0.00
         if (_expressionsList.value.isEmpty()) {
             return 0.00.toString()
         }
+        // Round the result to two decimal places
         val result = numbers.sum()
         val df = DecimalFormat("#.##")
         df.roundingMode = RoundingMode.HALF_UP
