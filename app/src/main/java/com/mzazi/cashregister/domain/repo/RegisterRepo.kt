@@ -16,8 +16,11 @@
 package com.mzazi.cashregister.domain.repo
 
 import com.mzazi.cashregister.data.cache.models.RegisterEntity
+import com.mzazi.cashregister.domain.models.RegisterValues
 import kotlinx.coroutines.flow.Flow
 
 interface RegisterRepo {
-    fun insertAndGetValues(input: RegisterEntity): Flow<List<RegisterEntity>>
+    fun getRegisterValues(): Flow<List<RegisterValues>>
+    suspend fun insertRegisterValues(input: RegisterValues)
+    suspend fun nukeRegisterValues()
 }

@@ -18,5 +18,8 @@ package com.mzazi.cashregister.data.mapper
 import com.mzazi.cashregister.data.cache.models.RegisterEntity
 import com.mzazi.cashregister.domain.models.RegisterValues
 
-fun RegisterEntity.asCoreModel(): RegisterValues =
+fun RegisterEntity.asCoreEntity(): RegisterValues =
     RegisterValues(values = values)
+
+fun RegisterValues.asCoreEntity(): RegisterEntity =
+    RegisterEntity(values = values)

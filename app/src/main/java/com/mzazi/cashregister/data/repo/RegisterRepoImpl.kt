@@ -16,28 +16,35 @@
 package com.mzazi.cashregister.data.repo
 
 import com.mzazi.cashregister.data.cache.dao.RegisterDao
-import com.mzazi.cashregister.data.cache.models.RegisterEntity
+import com.mzazi.cashregister.data.mapper.asCoreEntity
+import com.mzazi.cashregister.domain.models.RegisterValues
 import com.mzazi.cashregister.domain.repo.RegisterRepo
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import timber.log.Timber
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 class RegisterRepoImpl @Inject constructor(
     private val registerDao: RegisterDao,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : RegisterRepo {
 
-    override fun insertAndGetValues(input: RegisterEntity): Flow<List<RegisterEntity>> = flow {
-        try {
-            registerDao.nukeCashRegister()
-            registerDao.insertRegister(input)
-        } catch (e: Exception) {
-            Timber.e("Exception caught---------------$e")
+    override fun getRegisterValues(): Flow<List<RegisterValues>> {
+        return flow<List<RegisterValues>> {
+            registerDao.getRegisterEntries()
+        }.flowOn(dispatcher)
+    }
+
+    override suspend fun insertRegisterValues(input: RegisterValues) =
+        withContext(dispatcher) {
+            registerDao.insertRegister(input.asCoreEntity())
         }
-        emit(registerDao.getRegisterEntries())
-    }.flowOn(dispatcher)
+
+    override suspend fun nukeRegisterValues() =
+        withContext(dispatcher) {
+            registerDao.nukeCashRegister()
+        }
 }

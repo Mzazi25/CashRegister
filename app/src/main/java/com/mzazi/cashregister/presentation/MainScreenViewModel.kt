@@ -17,8 +17,6 @@ package com.mzazi.cashregister.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mzazi.cashregister.data.cache.models.RegisterEntity
-import com.mzazi.cashregister.data.mapper.asCoreModel
 import com.mzazi.cashregister.domain.models.RegisterAction
 import com.mzazi.cashregister.domain.models.RegisterValues
 import com.mzazi.cashregister.domain.models.operationSymbols
@@ -46,12 +44,14 @@ class MainScreenViewModel @Inject constructor(
     var summation = MutableStateFlow("")
 
     init {
+        observeCachedData()
+    }
+
+    private fun observeCachedData(){
         viewModelScope.launch {
-            val entity = RegisterEntity(values = _expressions.value)
-            repository.insertAndGetValues(entity)
-                .collect { entityList ->
-                    val toDomain = entityList.map { it.asCoreModel() }
-                    _expressionsList.value = toDomain
+            repository.getRegisterValues()
+                .collect { registerList ->
+                    _expressionsList.value = registerList
                 }
         }
     }
@@ -70,6 +70,10 @@ class MainScreenViewModel @Inject constructor(
                 _expressions.value += action.number
             }
             is RegisterAction.Op -> {
+                viewModelScope.launch {
+                    val registerValues = RegisterValues(_expressions.value)
+                    repository.insertRegisterValues(registerValues)
+                }
                 _expressionsList.value = _expressionsList.value + RegisterValues(
                     values = _expressions.value
                 )
@@ -77,6 +81,9 @@ class MainScreenViewModel @Inject constructor(
                 _expressions.value = ""
             }
             is RegisterAction.Clear -> {
+                viewModelScope.launch {
+                    repository.nukeRegisterValues()
+                }
                 _expressionsList.value = emptyList()
                 summation.value = 0.00.toString()
             }
