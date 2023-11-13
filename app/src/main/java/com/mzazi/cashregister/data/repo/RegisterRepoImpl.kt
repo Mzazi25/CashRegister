@@ -16,17 +16,15 @@ class RegisterRepoImpl @Inject constructor(
     private val registerDao:RegisterDao,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ): RegisterRepo{
-    override fun getRegisterValues(input: Double): Flow<RegisterEntity> = flow {
+
+    override fun insertAndGetValues(input: RegisterEntity): Flow<List<RegisterEntity>> = flow {
         try {
-            val register = RegisterEntity(
-                values = input
-            )
-            registerDao.insertRegister(register)
+            registerDao.nukeCashRegister()
+           registerDao.insertRegister(input)
         }catch (e:Exception){
-            // Something went wrong with the query to the Database
-            // Log the error and proceed
-            Timber.e("Exception---------------$e")
+            Timber.e("Exception caught---------------$e")
         }
         emit(registerDao.getRegisterEntries())
     }.flowOn(dispatcher)
+
 }

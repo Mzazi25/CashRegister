@@ -13,10 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.mzazi.cashregister.domain.models.RegisterValues
 
 @Composable
 fun ListDisplay(
-    operations:List<String>,
+    operations:List<RegisterValues>,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -29,9 +30,9 @@ fun ListDisplay(
             items(
                 items = operations
             ){ expression->
-                if (expression.isNotEmpty()){
+                if (expression.values.isNotEmpty()){
                     Text(
-                        text = "KSH $expression",
+                        text = "KSH ${expression.values}",
                         style = TextStyle(
                             fontSize = 20.sp,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,

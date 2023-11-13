@@ -4,5 +4,5 @@ import com.mzazi.cashregister.data.cache.models.RegisterEntity
 import kotlinx.coroutines.flow.Flow
 
 interface RegisterRepo {
-    fun getRegisterValues(input:Double):Flow<RegisterEntity>
+    fun insertAndGetValues(input:RegisterEntity):Flow<List<RegisterEntity>>
 }

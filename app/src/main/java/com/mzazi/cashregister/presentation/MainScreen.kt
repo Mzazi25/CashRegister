@@ -20,13 +20,14 @@ import com.mzazi.cashregister.designsystem.widgets.CashRegisterDisplay
 import com.mzazi.cashregister.designsystem.widgets.ListDisplay
 import com.mzazi.cashregister.designsystem.widgets.TotalSummationWidget
 import com.mzazi.cashregister.domain.models.RegisterAction
+import com.mzazi.cashregister.domain.models.RegisterValues
 import com.mzazi.cashregister.presentation.models.registerActions
 
 @Composable
 fun MainScreen(
     onAction:(RegisterAction) ->Unit,
     expression:String,
-    expressionList:List<String>,
+    expressionList:List<RegisterValues>,
     summation:String
 ) {
     Surface(
