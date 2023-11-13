@@ -45,7 +45,7 @@ fun RegisterButtons(
         if (action.text != null) {
             Text(
                 text = action.text,
-                fontSize = 24.sp,
+                fontSize = 18.sp,
                 textAlign = TextAlign.Center,
                 color = MaterialTheme.colorScheme.inversePrimary
             )
