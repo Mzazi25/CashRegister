@@ -19,13 +19,13 @@ import com.mzazi.cashregister.data.cache.dao.RegisterDao
 import com.mzazi.cashregister.data.mapper.asCoreEntity
 import com.mzazi.cashregister.domain.models.RegisterValues
 import com.mzazi.cashregister.domain.repo.RegisterRepo
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 class RegisterRepoImpl @Inject constructor(
     private val registerDao: RegisterDao,
@@ -34,7 +34,7 @@ class RegisterRepoImpl @Inject constructor(
 
     override fun getRegisterValues(): Flow<List<RegisterValues>> {
         return flow {
-            registerDao.getRegisterEntries().collect{ entityList->
+            registerDao.getRegisterEntries().collect { entityList ->
                 emit(entityList.map { it.asCoreEntity() })
             }
         }.flowOn(dispatcher)

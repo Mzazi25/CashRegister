@@ -41,20 +41,17 @@ class MainScreenViewModel @Inject constructor(
     private val _expressionsList = MutableStateFlow(listOf<RegisterValues>())
     val expressionsList: StateFlow<List<RegisterValues>> = _expressionsList.asStateFlow()
 
-    var summation = MutableStateFlow("")
+    val summation = MutableStateFlow("")
 
     init {
         observeCachedData()
     }
 
-    private fun observeCachedData(){
+    private fun observeCachedData() {
         viewModelScope.launch {
             repository.getRegisterValues()
                 .collect { registerList ->
                     _expressionsList.value = registerList
-                    _expressionsList.value = _expressionsList.value + RegisterValues(
-                        values = _expressions.value
-                    )
                     summation.value = calculateResult()
                 }
         }
@@ -77,15 +74,13 @@ class MainScreenViewModel @Inject constructor(
                 viewModelScope.launch {
                     val registerValues = RegisterValues(_expressions.value)
                     repository.insertRegisterValues(registerValues)
+                    _expressions.value = ""
                 }
-                _expressions.value = ""
             }
             is RegisterAction.Clear -> {
                 viewModelScope.launch {
                     repository.nukeRegisterValues()
                 }
-                _expressionsList.value = emptyList()
-                summation.value = 0.00.toString()
             }
         }
     }
@@ -102,6 +97,9 @@ class MainScreenViewModel @Inject constructor(
     private fun calculateResult(): String {
         val numbers = _expressionsList.value.mapNotNull {
             it.values.toDoubleOrNull()
+        }
+        if (_expressionsList.value.isEmpty()) {
+            return 0.00.toString()
         }
         val result = numbers.sum()
         val df = DecimalFormat("#.##")
