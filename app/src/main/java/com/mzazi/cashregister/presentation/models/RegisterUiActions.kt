@@ -61,7 +61,7 @@ val registerActions = listOf(
     ),
     RegisterUiAction(
         text = "ADD",
-        action = RegisterAction.Op(Operation.ADD)
+        action = RegisterAction.Add(Operation.ADD)
     ),
     RegisterUiAction(
         text = "DEL",
